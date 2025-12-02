@@ -94,12 +94,57 @@ struct lista {
         zadnja->next = nova;
         nova->next = NULL;
     }
+    
+  Person* get(int position) {
+    if (position < 0 || position > this->count())
+      return NULL;
+
+    Person* iterator = this->first;
+
+    int counter = 0;
+    while (counter++ < position) {
+      iterator = iterator->next;
+    }
+
+    return iterator;
+  }
+
+  void remove(int position) {
+      Person* previous = this->get(position-1);
+      Person* to_remove = this->get(position);
+
+      if (previous == NULL) {
+        this->first = to_remove->next;
+      } else {
+        previous->next = to_remove->next;
+      }
+      
+      delete to_remove;
+  }
+
+  void insert(Person* new_person, int position) {
+      Person* previous = this->get(position - 1);
+      
+      if (position == 0) {
+          this->addToStart(new_person);
+          return;
+      }
+      
+      if (position == -1) {
+          this->addToEnd(new_person);
+          return;
+      }
+      
+      // Novi pokazuje na ono sto je pokazivao prethodni
+      new_person->next = previous->next;
+      // Prethodni pokazuje na novi
+      previous->next = new_person;
+  }
 };
 
 
 int main()
 {
-
     Person* p1 = new Person("Ivan", 20);
     Person* p2 = new Person("Ana", 21);
     Person* p3 = new Person("Marko", 20);
@@ -148,8 +193,22 @@ int main()
     
     Person* p5 = new Person("Pero", 19);
     persons->addToStart(p5);
+    persons->addToStart(p1);
+    persons->addToStart(p2);
+    persons->addToStart(p3);
     persons->print();
     cout << "Broj elemenata: " << persons->count() << endl;
+    
+    persons->remove(4);
+    
+    cout << "Nakon brisanja" << endl;
+    persons->print();
+    cout << "---------" << endl;
+    
+    Person* p6 = new Person("Ivana", 19);
+    persons->insert(p6, -1);
+    
+    persons->print();
     
     return 0;
 }
